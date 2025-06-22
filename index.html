@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Feliz Cumpleaños Mi Niña</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: hidden;
+      height: 100%;
+      color: pink;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    h1 {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3em;
+      color: rgba(255, 192, 203, 0.2); /* Rosa tenue */
+      text-shadow: 0 0 15px rgba(255, 192, 203, 0.3);
+      z-index: 10;
+    }
+
+    .frase {
+      position: absolute;
+      font-size: 1.2em;
+      opacity: 0.8;
+      pointer-events: none;
+      white-space: nowrap;
+      color: #ffb6c1;
+      text-shadow: 0 0 10px #ff69b4;
+      animation: lluvia 6s linear forwards;
+      z-index: 20;
+    }
+
+    @keyframes lluvia {
+      0% {
+        transform: translateY(-20vh);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 5;
+    }
+  </style>
+</head>
+<body>
+  <h1>Feliz cumpleaños, mi niña</h1>
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const frasesRomanticas = [
+      "Feliz cumpleaños, te quiero mucho",
+      "Hoy el mundo es más lindo porque tú naciste",
+      "Tu sonrisa es mi mejor regalo",
+      "Eres la razón de muchas de mis sonrisas",
+      "En tu día, deseo estar más cerca de ti",
+      "Mi niña hermosa, feliz vida siempre",
+      "Gracias por existir, feliz cumpleaños",
+      "Mi corazón celebra tu existencia",
+      "Contigo todo es más bonito",
+      "Ojalá cada deseo tuyo se cumpla… yo te deseo a ti",
+      "Eres un sueño del que no quiero despertar"
+    ];
+
+    function crearFrase() {
+      const frase = document.createElement("div");
+      frase.classList.add("frase");
+      frase.innerText = frasesRomanticas[Math.floor(Math.random() * frasesRomanticas.length)];
+      frase.style.left = Math.random() * window.innerWidth + "px";
+      frase.style.fontSize = (Math.random() * 1.5 + 1) + "em";
+      document.body.appendChild(frase);
+      setTimeout(() => frase.remove(), 6000);
+    }
+
+    setInterval(crearFrase, 300);
+
+    // Fuegos artificiales con canvas
+    const canvas = document.getElementById("fireworks");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const fireworks = [];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function crearFuego(x, y) {
+      const cantidad = 20 + Math.floor(Math.random() * 20);
+      for (let i = 0; i < cantidad; i++) {
+        fireworks.push({
+          x,
+          y,
+          radius: 2,
+          dx: random(-4, 4),
+          dy: random(-4, 4),
+          alpha: 1,
+          color: `hsl(${random(300, 360)}, 100%, 75%)`
+        });
+      }
+    }
+
+    function animar() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = fireworks.length - 1; i >= 0; i--) {
+        const f = fireworks[i];
+        f.x += f.dx;
+        f.y += f.dy;
+        f.alpha -= 0.02;
+        if (f.alpha <= 0) {
+          fireworks.splice(i, 1);
+          continue;
+        }
+        ctx.beginPath();
+        ctx.arc(f.x, f.y, f.radius, 0, Math.PI * 2);
+        ctx.fillStyle = f.color;
+        ctx.globalAlpha = f.alpha;
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
+
+      requestAnimationFrame(animar);
+    }
+
+    animar();
+
+    canvas.addEventListener("click", e => {
+      crearFuego(e.clientX, e.clientY);
+    });
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
